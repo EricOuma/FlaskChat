@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <title>Flask Chat</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <script type="text/javascript" charset="utf-8">
+      var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+      socket.on('connect', function() {
+        socket.emit('my event', {
+          data: 'User Connected'
+        });
+        var form = $('form').on('submit', function(e) {
+          e.preventDefault()
+          let user_name = $('input.username').val()
+          let user_input = $('input.message').val()
+          socket.emit('my event', {
+            user_name: user_name,
+            message: user_input
+          });
+          $('input.message').val('').focus()
+        });
+      });
+      socket.on('my response', function(msg){
+        console.log(msg)
+        if(typeof msg.user_name !== 'undefined') {
+          $('h3').remove()
+          $('div.message_holder').append('<div><b style="color: #000">'+msg.user_name+'</b>'+msg.message+'</div>')
+        }
+      })
+    </script>
+  </head>
+  <body>
+      <h3 style='color: #ccc;font-size: 30px;'>No message yet..</h3>
+      <div class="message_holder"></div>
+    <div class="jumbotron">
+      <form action="" method="POST">
+        <input type="text" class="username" placeholder="User Name"/>
+        <input type="text" class="message" placeholder="Messages"/>
+        <input type="submit"/>
+  </form>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  </body>
+</html>
